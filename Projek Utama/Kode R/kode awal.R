@@ -100,3 +100,73 @@ print(doc, target = "output_word/Laporan_TIMSS_BSMK.docx")
 
 # Opsional: Hapus folder plot sementara
 # unlink("temp_plots", recursive = TRUE)
+
+# Pertemuan 5 Maret 2026
+dt1 <-data[,17:276]
+colnames(dt1)
+namates <- unique(substr(colnames(dt1), 1, 4))
+namates
+
+dt1_bsmkn <-dt1[,grep("BSMKN", colnames(dt1))]
+dt1_btbg <-dt1[,grep("BTBG", colnames(dt1))]
+
+datagab_1 <-cbind(dt1_btbg, dt1_bsmkn)
+colnames(datagab_1)
+
+nomor<- c(1:20)
+lisdata <-list(dt1_bsmkn, dt1_btbg, nomor)
+
+names(lisdata)[1]<- "bsmkn"
+lisdata[[1]]
+angka<-c(21:40)
+angka[1]
+for (i in 1:10){
+  tmp<-angka[i]
+  print(tmp+3)
+}
+
+for (z in 1:2){
+  tmp<-lisdata[[z]]
+  writexl::write_xlsx(tmp, paste0("dataqyu-", z, ".xlsx"))
+  
+}
+
+dt1_bsmkn
+
+
+# Pastikan folder output tersedia
+if(!dir.exists("output_histogramm")) {
+  dir.create("output_histogramm")
+}
+
+# Looping untuk setiap kolom dalam dt1_bsmkn
+for (col_name in colnames(dt1_bsmkn)) {
+  
+  file_path <- paste0("output_histogramm/hist_norm_", col_name, ".png")
+  png(file_path, width = 800, height = 600)
+  
+  data_col <- dt1_bsmkn[[col_name]]
+  
+  # 1. Plot Histogram
+  # freq = FALSE digunakan agar sumbu Y menunjukkan density, bukan frekuensi
+  # Ini wajib agar skala histogram sesuai dengan kurva normal
+  hist(data_col, 
+       freq = FALSE, 
+       main = paste("Distribusi", col_name),
+       xlab = "Skor",
+       ylab = "Density",
+       col = "purple", 
+       border = "white")
+  
+  # 2. Tambahkan Garis Kurva Normal
+  # dnorm menghitung probability density function (PDF) dari distribusi normal
+  # x ~ N(\mu, \sigma^2)
+  curve(dnorm(x, mean = mean(data_col, na.rm = TRUE), 
+              sd = sd(data_col, na.rm = TRUE)), 
+        add = TRUE, 
+        col = "black", 
+        lwd = 2)
+  
+  dev.off()
+}
+

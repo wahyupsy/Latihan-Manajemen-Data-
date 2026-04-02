@@ -38,3 +38,5 @@ dt_sisker_avr <- dt_sisker_wide %>%
 head(dt_sisker_avr)
 
 library(mice)
+library(Amelia)
+
